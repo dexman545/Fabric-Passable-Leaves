@@ -1,0 +1,39 @@
+package dex.passableleaves.mixin;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(LeavesBlock.class)
+public class LeavesBlockMixin extends Block {
+
+	@Inject(method = "<init>(Lnet/minecraft/block/Block$Settings;)V", at = @At("RETURN"))
+	public void LeavesBlockBlah(Settings settings, CallbackInfo ci) {
+		((BlockAccessMixin) this).setCollidable(false);
+	}
+
+	public LeavesBlockMixin(Settings settings) {
+		super(settings.noCollision());
+	}
+
+	public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+		//entity.slowMovement(state, new Vec3d(0.8D, 0.8D, 0.8D));
+		/*((EntityAccessMixin) entity).setMovementMultiplier(new Vec3d(0.8D, 0.9D, 0.8D));*/
+		entity.fallDistance = entity.fallDistance * 0.95f;
+		Vec3d oldVel = entity.getVelocity();
+		entity.setVelocity(oldVel.multiply(0.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 0.0D));
+		if (entity.getVelocity().length() > 0.1D) {
+			entity.handleFallDamage(entity.fallDistance, 0.5f);
+		}
+	}
+
+}
+
