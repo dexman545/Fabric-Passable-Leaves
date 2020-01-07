@@ -36,9 +36,11 @@ public class LeavesBlockMixin extends Block {
 				//can't reduce horizontal velocity otherwise no flight is possible
 				entity.setVelocity(oldVel.multiply(1.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 1.0D));
 				entity.damage(DamageSource.FLY_INTO_WALL, (float) (entity.getVelocity().length() / .25D) * 0.5f);
+			} else {
+				entity.setVelocity(oldVel.multiply(0.8D, (oldVel.y > 0 ? 1.0D : 0.5D), 0.8D));
 			}
 		} else {
-			entity.setVelocity(oldVel.multiply(1.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 1.0D));
+			entity.setVelocity(oldVel.multiply(0.7D, (oldVel.y > 0 ? 1.0D : 0.5D), 0.7D));
 		}
 		if (entity.getVelocity().length() > 0.1D) {
 			entity.handleFallDamage(entity.fallDistance, 0.5f);
