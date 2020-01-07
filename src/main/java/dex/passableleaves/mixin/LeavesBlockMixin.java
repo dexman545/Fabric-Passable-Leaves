@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -29,7 +31,15 @@ public class LeavesBlockMixin extends Block {
 		/*((EntityAccessMixin) entity).setMovementMultiplier(new Vec3d(0.8D, 0.9D, 0.8D));*/
 		entity.fallDistance = entity.fallDistance * 0.95f;
 		Vec3d oldVel = entity.getVelocity();
-		entity.setVelocity(oldVel.multiply(0.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 0.0D));
+		if (entity instanceof PlayerEntity) {
+			if (((PlayerEntity) entity).isFallFlying()) {
+				//can't reduce horizontal velocity otherwise no flight is possible
+				entity.setVelocity(oldVel.multiply(1.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 1.0D));
+				entity.damage(DamageSource.FLY_INTO_WALL, (float) (entity.getVelocity().length() / .25D) * 0.5f);
+			}
+		} else {
+			entity.setVelocity(oldVel.multiply(1.0D, (oldVel.y > 0 ? 1.0D : 0.5D), 1.0D));
+		}
 		if (entity.getVelocity().length() > 0.1D) {
 			entity.handleFallDamage(entity.fallDistance, 0.5f);
 		}
