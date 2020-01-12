@@ -6,10 +6,12 @@ import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,9 +30,24 @@ public class LeavesBlockMixin extends Block {
 		super(settings.noCollision());
 	}
 
+	@Override
+	public VoxelShape getRayTraceShape(BlockState state, BlockView view, BlockPos pos) {
+		return VoxelShapes.fullCube();
+	}
+
+	@Override
+	public boolean isTranslucent(BlockState state, BlockView view, BlockPos pos) {
+		return false;
+	}
+
+	@Override
+	public float getAmbientOcclusionLightLevel(BlockState state, BlockView view, BlockPos pos) {
+		return 0.2f;
+	}
+
+
+
 	public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-		//entity.slowMovement(state, new Vec3d(0.8D, 0.8D, 0.8D));
-		/*((EntityAccessMixin) entity).setMovementMultiplier(new Vec3d(0.8D, 0.9D, 0.8D));*/
 		entity.fallDistance = entity.fallDistance * 0.95f;
 		Vec3d oldVel = entity.getVelocity();
 		if (entity instanceof PlayerEntity) {
