@@ -31,16 +31,6 @@ public class LeavesBlockMixin extends Block {
 	}
 
 	@Override
-	public VoxelShape getRayTraceShape(BlockState state, BlockView view, BlockPos pos) {
-		return VoxelShapes.fullCube();
-	}
-
-	@Override
-	public boolean isTranslucent(BlockState state, BlockView view, BlockPos pos) {
-		return false;
-	}
-
-	@Override
 	public float getAmbientOcclusionLightLevel(BlockState state, BlockView view, BlockPos pos) {
 		return 0.2f;
 	}
