@@ -1,11 +1,8 @@
 package dex.passableleaves;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.registry.Registry;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -52,14 +49,6 @@ public class PassableLeaves implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
-		AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) ->
-		{
-
-			System.out.println(Registry.BLOCK.getId(world.getBlockState(pos).getBlock()));
-
-			return ActionResult.PASS;
-		});
 
 		ServerStartCallback.EVENT.register(t -> {
 			meh.clear();
