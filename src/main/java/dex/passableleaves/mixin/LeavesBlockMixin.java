@@ -1,6 +1,7 @@
 package dex.passableleaves.mixin;
 
 import dex.passableleaves.PassableLeaves;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -25,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
-@Mixin(BlockState.class)
+@Mixin(AbstractBlock.AbstractBlockState.class)
 public abstract class LeavesBlockMixin {
 
 	@Shadow public abstract Block getBlock();
