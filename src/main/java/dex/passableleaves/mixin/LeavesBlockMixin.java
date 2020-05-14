@@ -5,6 +5,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -35,21 +36,21 @@ public abstract class LeavesBlockMixin {
 	}
 
 	@Inject(at=@At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
-	public void getCollisionShape(BlockView view, BlockPos pos, ShapeContext ePos, CallbackInfoReturnable<VoxelShape> cir) {
+	private void getCollisionShape(BlockView view, BlockPos pos, ShapeContext ePos, CallbackInfoReturnable<VoxelShape> cir) {
 		if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
 			cir.setReturnValue(VoxelShapes.empty());
 		}
 	}
 
 	@Inject(at=@At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
-	public void getCollisionShape(BlockView view, BlockPos pos, CallbackInfoReturnable<VoxelShape> cir) {
+	private void getCollisionShape(BlockView view, BlockPos pos, CallbackInfoReturnable<VoxelShape> cir) {
 		if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
 			cir.setReturnValue(VoxelShapes.empty());
 		}
 	}
 
 	@Inject(at=@At("HEAD"), method = "onEntityCollision")
-	public void onEntityCollision(World world, BlockPos pos, Entity entity, CallbackInfo ci) {
+	private void onEntityCollision(World world, BlockPos pos, Entity entity, CallbackInfo ci) {
 		if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
 			entity.fallDistance = entity.fallDistance * 0.95f;
 			Vec3d oldVel = entity.getVelocity();
@@ -70,6 +71,14 @@ public abstract class LeavesBlockMixin {
 			if (entity.getVelocity().length() > 0.1D) {
 				entity.handleFallDamage(entity.fallDistance, 0.5f);
 			}
+		}
+	}
+
+	// Pathfinding patch
+	@Inject(at=@At("HEAD"), method = "canPathfindThrough(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/ai/pathing/NavigationType;)Z", cancellable = true)
+	private void changePathfinding(BlockView world, BlockPos pos, NavigationType type, CallbackInfoReturnable<Boolean> cir) {
+		if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
+			cir.setReturnValue(true);
 		}
 	}
 
