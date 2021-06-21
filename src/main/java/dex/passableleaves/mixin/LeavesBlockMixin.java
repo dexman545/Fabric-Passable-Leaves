@@ -89,7 +89,7 @@ public abstract class LeavesBlockMixin {
 					entity.setVelocity(oldVel.multiply(0.7D, (oldVel.y > 0 ? 1.0D : 0.5D), 0.7D));
 				}
 				if (entity.getVelocity().length() > 0.1D) {
-					entity.handleFallDamage(entity.fallDistance, 0.5f);
+					entity.handleFallDamage(entity.fallDistance, 0.5f, DamageSource.FALL);
 				}
 			}
 		}

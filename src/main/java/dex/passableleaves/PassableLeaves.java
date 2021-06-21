@@ -1,6 +1,7 @@
 package dex.passableleaves;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.commons.io.FileUtils;
@@ -49,8 +50,7 @@ public class PassableLeaves implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
-		ServerStartCallback.EVENT.register(t -> {
+		ServerLifecycleEvents.SERVER_STARTED.register(t -> {
 			meh.clear();
 			meh.addAll(Objects.requireNonNull(getPassable().orElse(null)));
 		});
