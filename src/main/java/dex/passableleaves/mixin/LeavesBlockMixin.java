@@ -24,45 +24,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
-
 @Mixin(AbstractBlock.AbstractBlockState.class)
 public abstract class LeavesBlockMixin {
 
 	@Shadow public abstract Block getBlock();
 
-	private List<String> getPassable() {
-		return PassableLeaves.meh;
-	}
-
-	// fix better nether
-	private boolean checkTagExists() {
-		if (BlockTags.LEAVES != null) {
-			try {
-				BlockTags.LEAVES.values();
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		}
-
-
-		return false;
-	}
-
 	@Inject(at=@At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
 	private void getCollisionShape(BlockView view, BlockPos pos, ShapeContext ePos, CallbackInfoReturnable<VoxelShape> cir) {
-		if (checkTagExists()) {
-			if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
-				cir.setReturnValue(VoxelShapes.empty());
-			}
-		}
-	}
-
-	@Inject(at=@At("HEAD"), method = "getCollisionShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/shape/VoxelShape;", cancellable = true)
-	private void getCollisionShape(BlockView view, BlockPos pos, CallbackInfoReturnable<VoxelShape> cir) {
-		if (checkTagExists()) {
-			if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
+		if (PassableLeaves.checkTagExists()) {
+			if (BlockTags.LEAVES.contains(this.getBlock()) || PassableLeaves.getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
 				cir.setReturnValue(VoxelShapes.empty());
 			}
 		}
@@ -70,8 +40,8 @@ public abstract class LeavesBlockMixin {
 
 	@Inject(at=@At("HEAD"), method = "onEntityCollision")
 	private void onEntityCollision(World world, BlockPos pos, Entity entity, CallbackInfo ci) {
-		if (checkTagExists()) {
-			if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
+		if (PassableLeaves.checkTagExists()) {
+			if (PassableLeaves.isPassable(getBlock())) {
 				entity.fallDistance = entity.fallDistance * 0.95f;
 				Vec3d oldVel = entity.getVelocity();
 				if (entity instanceof PlayerEntity) {
@@ -98,14 +68,21 @@ public abstract class LeavesBlockMixin {
 	// Pathfinding patch
 	@Inject(at=@At("HEAD"), method = "canPathfindThrough(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/ai/pathing/NavigationType;)Z", cancellable = true)
 	private void changePathfinding(BlockView world, BlockPos pos, NavigationType type, CallbackInfoReturnable<Boolean> cir) {
-		if (checkTagExists()) {
-			if (BlockTags.LEAVES.contains(this.getBlock()) || getPassable().contains(Registry.BLOCK.getId(this.getBlock()).toString())) {
+		if (PassableLeaves.checkTagExists()) {
+			if (PassableLeaves.isPassable(getBlock())) {
 				cir.setReturnValue(true);
 			}
 		}
 	}
 
-
+	@Inject(at=@At("HEAD"), method = "canPathfindThrough(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/ai/pathing/NavigationType;)Z", cancellable = true)
+	private void changePathing2(BlockView world, BlockPos pos, NavigationType type, CallbackInfoReturnable<Boolean> cir) {
+		if (PassableLeaves.checkTagExists()) {
+			if (PassableLeaves.isPassable(getBlock())) {
+				cir.setReturnValue(true);
+			}
+		}
+	}
 
 }
 

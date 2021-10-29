@@ -3,12 +3,7 @@
   "package": "dex.passableleaves.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "LeavesBlockMixin",
-    "Meh"
-  ],
-  "server": [
-    "LeavesBlockMixin",
-    "Meh"
+    "LeavesBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
