@@ -3,9 +3,9 @@ package dex.passableleaves;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Block;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -68,7 +68,7 @@ public class PassableLeaves implements ModInitializer {
 	}
 
 	public static boolean isPassable(Block block) {
-		return BlockTags.LEAVES.contains(block) || PassableLeaves.getPassable().contains(Registry.BLOCK.getId(block).toString());
+		return BlockTags.LEAVES.contains(block) || PassableLeaves.getPassable().contains(Registry.BLOCK.getKey(block).toString());
 	}
 
     @Override
