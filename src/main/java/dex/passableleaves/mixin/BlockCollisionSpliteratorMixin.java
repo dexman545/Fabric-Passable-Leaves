@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 @Mixin(BlockCollisions.class)
 public abstract class BlockCollisionSpliteratorMixin {
-    @Inject(method = "offerBlockShape(Ljava/util/function/Consumer;)Z", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "offerBlockShape(Ljava/util/function/Consumer;)Z", at = @At("HEAD"), cancellable = true)
     private void callOfferBlockShape(Consumer<? super VoxelShape> action, CallbackInfoReturnable<Boolean> cir) {
         //PassableLeaves.isPassable(getBlock());
         //cir.setReturnValue(false);
@@ -25,7 +25,7 @@ public abstract class BlockCollisionSpliteratorMixin {
     private static void modifyPredicate(BlockState state, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         //PassableLeaves.isPassable(getBlock());
         //cir.setReturnValue(false);
-    }
+    }*/
 
 
 }
