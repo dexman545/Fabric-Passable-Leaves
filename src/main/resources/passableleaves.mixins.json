@@ -5,8 +5,8 @@
   "mixins": [
     "BlockBehaviorMixin",
     "EntityAccessor",
-    "LeavesBlockMixin",
-    "LivingEntityAccessor"
+    "LivingEntityAccessor",
+    "PropertiesAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

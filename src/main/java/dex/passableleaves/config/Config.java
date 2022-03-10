@@ -1,15 +1,14 @@
 package dex.passableleaves.config;
 
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
-
-import java.util.Set;
-
-public interface Config {
-    double getVelocityDamping();
-
-    Set<Block> passableBlocks();
-
-    Set<TagKey<Block>> passableTags();
+public record Config(
+        VelocityDamper projectile,
+        VelocityDamper glidingLiving,
+        VelocityDamper jumpingLiving,
+        VelocityDamper living,
+        VelocityDamper entity,
+        float fallDistanceFactor,
+        float fallDamageFactor
+) {
 }
+
+record VelocityDamper(float v_x, float v_y, float v_z) {}
