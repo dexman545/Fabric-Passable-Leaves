@@ -1,5 +1,6 @@
 package dex.passableleaves.mixin;
 
+import dex.passableleaves.PassableLeaves;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -81,12 +82,12 @@ public abstract class BlockBehaviorMixin {
         var scaling = new Vec3(1/normSpeed.x, slowFactor.y == 1 ? 1 : 1/normSpeed.y, 1/normSpeed.z);
 
         if (entity instanceof Projectile) {
-            slowFactor = new Vec3(0.5, 0.5, 0.5);
+            slowFactor = PassableLeaves.config.projectile().toVec3();
             slowFactor.multiply(scaling);
         } else if (entity instanceof LivingEntity living) {
             if (living.isFallFlying()) {//todo projectile and gliding player are being caught
                 // Can't reduce horizontal velocity too much or flaying will stop
-                slowFactor = new Vec3(0.9, 0.99996, 0.9);
+                slowFactor = PassableLeaves.config.glidingLiving().toVec3();
 
                 // Damage entity for flying into a wall - those branches hurt!
                 var damage = (float)((living.getDeltaMovement().length() - (living.getDeltaMovement().horizontalDistance())) * 10.0 - 3.0);
@@ -94,14 +95,14 @@ public abstract class BlockBehaviorMixin {
             } else {
                 if (((LivingEntityAccessor) ((Object) living)).isJumping()) {
                     // Don't slow vertical velocity when jumping otherwise can't walk up a block
-                    slowFactor = new Vec3(0.8, 1, 0.8);
+                    slowFactor = PassableLeaves.config.jumpingLiving().toVec3();
                 } else {
-                    slowFactor = new Vec3(0.8, 0.8, 0.8);
+                    slowFactor = PassableLeaves.config.living().toVec3();
                     slowFactor.multiply(scaling);
                 }
             }
         } else {
-            slowFactor = new Vec3(0.7, 0.7, 0.7);
+            slowFactor = PassableLeaves.config.entity().toVec3();
             slowFactor.multiply(scaling);
         }
 
@@ -109,9 +110,9 @@ public abstract class BlockBehaviorMixin {
         entity.setDeltaMovement(entity.getDeltaMovement().multiply(slowFactor));
 
         // Modify fallDistance and deal half fall damage
-        entity.fallDistance *= 0.75f;
+        entity.fallDistance *= PassableLeaves.config.fallDistanceFactor();
         if (entity.getDeltaMovement().length() > 0.1) {
-            entity.causeFallDamage(entity.fallDistance, 0.5f, DamageSource.FALL);
+            entity.causeFallDamage(entity.fallDistance, PassableLeaves.config.fallDamageFactor(), DamageSource.FALL);
         }
 
         // Play sound
