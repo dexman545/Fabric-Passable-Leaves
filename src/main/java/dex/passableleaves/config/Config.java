@@ -27,6 +27,43 @@ public record Config(
                 0.5f);
     }
 
+    //todo make this maintainable by looping over all components genericly and copying from the default
+    Config ensureCorrectness() {
+        var defaultConfig = new Config();
+        Config repaired = this;
+        if (projectile == null) {
+            repaired = new Config(defaultConfig.projectile, repaired.glidingLiving,
+                    repaired.jumpingLiving, this.living, repaired.entity,
+                    repaired.fallDistanceFactor, repaired.fallDamageFactor);
+        }
+
+        if (glidingLiving == null) {
+            repaired = new Config(repaired.projectile, defaultConfig.glidingLiving,
+                    repaired.jumpingLiving, repaired.living, repaired.entity,
+                    repaired.fallDistanceFactor, repaired.fallDamageFactor);
+        }
+
+        if (jumpingLiving == null) {
+            repaired = new Config(repaired.projectile, repaired.glidingLiving,
+                    defaultConfig.jumpingLiving, repaired.living, repaired.entity,
+                    repaired.fallDistanceFactor, repaired.fallDamageFactor);
+        }
+
+        if (living == null) {
+            repaired = new Config(repaired.projectile, repaired.glidingLiving,
+                    repaired.jumpingLiving, defaultConfig.living, repaired.entity,
+                    repaired.fallDistanceFactor, repaired.fallDamageFactor);
+        }
+
+        if (entity == null) {
+            repaired = new Config(repaired.projectile, repaired.glidingLiving,
+                    repaired.jumpingLiving, repaired.living, defaultConfig.entity,
+                    repaired.fallDistanceFactor, repaired.fallDamageFactor);
+        }
+
+        return repaired;
+    }
+
     public void writeJson(Path path) {
         var gson = new GsonBuilder()
                 .registerTypeAdapterFactory(new RecordTypeAdapterFactory())
@@ -46,7 +83,7 @@ public record Config(
                 .create();
 
         try {
-            return gson.fromJson(Files.readString(path), Config.class);
+            return gson.fromJson(Files.readString(path), Config.class).ensureCorrectness();
         } catch (IOException e) {
             e.printStackTrace();
         }
