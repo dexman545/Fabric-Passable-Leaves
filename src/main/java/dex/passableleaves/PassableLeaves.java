@@ -2,18 +2,11 @@ package dex.passableleaves;
 
 import dex.passableleaves.config.Config;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Registry;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Block;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class PassableLeaves implements ModInitializer {
 	public static final Path configFile = FabricLoader.getInstance().getConfigDir().resolve("passable-leaves.json");

@@ -1,12 +1,11 @@
 package dex.passableleaves.mixin;
 
+import dex.passableleaves.LeafCheck;
 import dex.passableleaves.PassableLeaves;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,15 +31,13 @@ import java.util.concurrent.ThreadLocalRandom;
 @Mixin(BlockBehaviour.BlockStateBase.class)
 public abstract class BlockBehaviorMixin {
 
-    @Shadow public abstract boolean is(TagKey<Block> tagKey);
-
     @Shadow public abstract Block getBlock();
 
     @Inject(method = {"getFaceOcclusionShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Lnet/minecraft/world/phys/shapes/VoxelShape;",
             "getOcclusionShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/phys/shapes/VoxelShape;"},
             at = @At("RETURN"), cancellable = true)
     private void modifyOcclusion(BlockGetter blockGetter, BlockPos blockPos, Direction direction, CallbackInfoReturnable<VoxelShape> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             cir.setReturnValue(Shapes.block());
         }
     }
@@ -49,7 +46,7 @@ public abstract class BlockBehaviorMixin {
             "getShape*"},
             at = @At("RETURN"), cancellable = true)
     private void modifyCollision(BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<VoxelShape> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             cir.setReturnValue(Shapes.block());
         }
     }
@@ -57,23 +54,23 @@ public abstract class BlockBehaviorMixin {
     @Inject(method = {"getCollisionShape(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/shapes/CollisionContext;)Lnet/minecraft/world/phys/shapes/VoxelShape;"},
             at = @At("RETURN"), cancellable = true)
     private void setCollisionShape(CallbackInfoReturnable<VoxelShape> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             cir.setReturnValue(Shapes.empty());
         }
     }
 
-    // This is what broke shadows
+    // ((BlockBehaviour.BlockStateBase) ((Object) this)) is what broke shadows
     /*@Inject(method = "isCollisionShapeFullBlock(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;)Z",
     cancellable = true, at = @At("RETURN"))
     private void modifyFullShapeQuery(BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             cir.setReturnValue(false);
         }
     }*/
 
     @Inject(method = {"entityInside"}, at = @At("TAIL"))
     private void modifyEntityMovement(Level level, BlockPos blockPos, Entity entity, CallbackInfo ci) {
-        if (!is((BlockTags.LEAVES))) return;
+        if (!LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) return;
         //entity.makeStuckInBlock(blockState, new Vec3(0.25, 0.05f, 0.25)); // Can't use as it reset fall damage to 0
         var slowFactor = Vec3.ZERO;
 
@@ -140,7 +137,7 @@ public abstract class BlockBehaviorMixin {
     // Pathfinding fix
     @Inject(method = "isPathfindable", at = @At("RETURN"), cancellable = true)
     private void canPathFind(BlockGetter blockGetter, BlockPos blockPos, PathComputationType pathComputationType, CallbackInfoReturnable<Boolean> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             if (pathComputationType == PathComputationType.AIR) cir.setReturnValue(true);
             if (pathComputationType == PathComputationType.LAND) cir.setReturnValue(false);
         }
@@ -148,7 +145,7 @@ public abstract class BlockBehaviorMixin {
 
     @Inject(method = {"isAir"}, at = @At("RETURN"), cancellable = true)
     private void modifySightForMobs(CallbackInfoReturnable<Boolean> cir) {
-        if (is((BlockTags.LEAVES))) {
+        if (LeafCheck.isLeaf(((BlockBehaviour.BlockStateBase) ((Object) this)))) {
             cir.setReturnValue(true);
         }
     }
