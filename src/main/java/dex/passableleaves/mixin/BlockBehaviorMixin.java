@@ -4,9 +4,13 @@ import dex.passableleaves.LeafCheck;
 import dex.passableleaves.PassableLeaves;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -85,10 +89,15 @@ public abstract class BlockBehaviorMixin {
             if (living.isFallFlying()) {//todo projectile and gliding player are being caught
                 // Can't reduce horizontal velocity too much or flaying will stop
                 slowFactor = PassableLeaves.config.glidingLiving().toVec3();
-
+                
                 // Damage entity for flying into a wall - those branches hurt!
                 var damage = (float)((living.getDeltaMovement().length() - (living.getDeltaMovement().horizontalDistance())) * 10.0 - 3.0);
-                living.hurt(DamageSource.FLY_INTO_WALL, (living.flyingSpeed * damage)/3f);
+                
+                DamageSource dmg = new DamageSource(Holder<DamageType>);
+                living.hurt(, (living.getSpeed() * damage)/3f);
+                living.hu
+
+                living.hurt(new DamageSource())
             } else {
                 if (((LivingEntityAccessor) ((Object) living)).isJumping()) {
                     // Don't slow vertical velocity when jumping otherwise can't walk up a block
@@ -109,7 +118,7 @@ public abstract class BlockBehaviorMixin {
         // Modify fallDistance and deal half fall damage
         entity.fallDistance *= PassableLeaves.config.fallDistanceFactor();
         if (entity.getDeltaMovement().length() > 0.1) {
-            entity.causeFallDamage(entity.fallDistance, PassableLeaves.config.fallDamageFactor(), DamageSource.FALL);
+            entity.causeFallDamage(entity.fallDistance, PassableLeaves.config.fallDamageFactor(), );
         }
 
         // Play sound
